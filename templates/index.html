@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>kAren Store 888 - Premium Game Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0e27;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Анимированный фон */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0f1023 100%);
+        }
+
+        .animated-bg::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%);
+            animation: pulse 10s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(0, 0); opacity: 0.5; }
+            50% { transform: translate(-10%, -10%); opacity: 1; }
+        }
+
+        /* Навбар */
+        .navbar {
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(102, 126, 234, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 15px 0;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 2px;
+        }
+
+        .logo span {
+            font-size: 32px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .user-stats {
+            background: rgba(102, 126, 234, 0.2);
+            padding: 8px 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(102, 126, 234, 0.5);
+        }
+
+        /* Хедер */
+        .hero {
+            text-align: center;
+            padding: 80px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero h1 {
+            font-size: 4em;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #667eea 50%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 20px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .hero p {
+            color: rgba(255,255,255,0.7);
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease 0.2s backwards;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 40px;
+            animation: fadeInUp 0.8s ease 0.4s backwards;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: rgba(255,255,255,0.6);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Основной контент */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 30px;
+        }
+
+        /* Фильтры */
+        .filters {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .search-bar {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 30px;
+            color: #fff;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: rgba(255,255,255,0.15);
+        }
+
+        .search-bar::before {
+            content: '🔍';
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+        }
+
+        .category-filters {
+            display: flex;
+            gap: 15px;
+        }
+
+        .category-btn {
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .category-btn:hover, .category-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+        }
+
+        /* Сетка игр */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        /* Карточка игры - премиум дизайн */
+        .game-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .game-card:hover::before {
+            left: 100%;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+
+        .game-banner {
+            height: 160px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-banner::after {
+            content: '🎮';
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 50px;
+            opacity: 0.3;
+        }
+
+        .game-info {
+            padding: 25px;
+        }
+
+        .game-name {
+            font-size: 1.4em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #fff 0%, #667eea 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .game-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .game-size {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .download-btn {
+            display: block;
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .download-btn::before {
+            content: '⬇️';
+            margin-right: 10px;
+        }
+
+        .download-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Лоадер */
+        .loading {
+            text-align: center;
+            padding: 60px;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(102, 126, 234, 0.3);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Пустое состояние */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        /* Футер */
+        .footer {
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(102, 126, 234, 0.3);
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+            text-align: center;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Адаптив */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2em;
+            }
+            
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters {
+                flex-direction: column;
+            }
+            
+            .search-bar {
+                max-width: 100%;
+            }
+            
+            .category-filters {
+                width: 100%;
+                overflow-x: auto;
+            }
+            
+            .nav-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        /* Анимация появления карточек */
+        .game-card {
+            animation: fadeInScale 0.5s ease-out backwards;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Счетчик игр */
+        .games-count {
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+
+    <!-- Навбар -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span>🎮</span> kAren Store 888
+            </div>
+            <div class="nav-links">
+                <a href="#" class="nav-link">Главная</a>
+                <a href="#" class="nav-link">Игры</a>
+                <a href="#" class="nav-link">Топ</a>
+                <a href="#" class="nav-link">Новинки</a>
+                <div class="user-stats">
+                    👤 Гость
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero секция -->
+    <div class="hero">
+        <h1>Premium Game Store</h1>
+        <p>Лучшие игры в одном месте • Бесплатно • Без вирусов</p>
+        <div class="stats-bar" id="stats-bar">
+            <div class="stat">
+                <div class="stat-number" id="games-count">0</div>
+                <div class="stat-label">Игр в коллекции</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Поддержка</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">⚡</div>
+                <div class="stat-label">Мгновенные загрузки</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Фильтры -->
+        <div class="filters">
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Поиск игр...">
+            </div>
+            <div class="category-filters">
+                <button class="category-btn active" data-category="all">Все игры</button>
+                <button class="category-btn" data-category="action">🎯 Экшен</button>
+                <button class="category-btn" data-category="rpg">⚔️ RPG</button>
+                <button class="category-btn" data-category="indie">🎨 Инди</button>
+            </div>
+        </div>
+
+        <!-- Контейнер игр -->
+        <div id="games-container">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Загрузка игр...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Футер -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>© 2024 kAren Store 888. Все права защищены.</p>
+            <p style="margin-top: 10px; font-size: 12px;">🎮 Premium Game Distribution Platform</p>
+        </div>
+    </footer>
+
+    <script>
+        // API URL
+        const API_URL = '/game/all';
+        let allGames = [];
+        let currentCategory = 'all';
+        let searchQuery = '';
+
+        // Загрузка списка игр
+        async function loadGames() {
+            const container = document.getElementById('games-container');
+            container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Загрузка игр...</p></div>';
+            
+            try {
+                const response = await fetch(API_URL);
+                
+                if (!response.ok) {
+                    throw new Error('Ошибка загрузки');
+                }
+                
+                const data = await response.json();
+                allGames = data.games || [];
+                
+                // Обновляем счетчик
+                document.getElementById('games-count').textContent = allGames.length;
+                
+                // Применяем фильтры
+                filterAndDisplayGames();
+            } catch (error) {
+                console.error('Ошибка:', error);
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">😕</div>
+                        <h3>Ошибка загрузки игр</h3>
+                        <p>Пожалуйста, проверьте соединение</p>
+                        <button onclick="loadGames()" style="margin-top: 20px; padding: 10px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 25px; color: white; cursor: pointer;">Повторить</button>
+                    </div>
+                `;
+            }
+        }
+        
+        // Фильтрация игр
+        function filterAndDisplayGames() {
+            let filteredGames = [...allGames];
+            
+            // Поиск
+            if (searchQuery) {
+                filteredGames = filteredGames.filter(game => 
+                    game.name.toLowerCase().includes(searchQuery.toLowerCase())
+                );
+            }
+            
+            // Категории (демо-фильтрация - можно расширить)
+            if (currentCategory !== 'all') {
+                // Здесь можно добавить логику фильтрации по категориям
+                // Пока просто показываем все
+            }
+            
+            displayGames(filteredGames);
+        }
+        
+        // Отображение игр
+        function displayGames(games) {
+            const container = document.getElementById('games-container');
+            
+            if (!games || games.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🎮</div>
+                        <h3>Игры не найдены</h3>
+                        <p>Попробуйте изменить параметры поиска</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const gamesGrid = document.createElement('div');
+            gamesGrid.className = 'games-grid';
+            
+            // Добавляем счетчик
+            const countInfo = document.createElement('div');
+            countInfo.className = 'games-count';
+            countInfo.innerHTML = `📊 Найдено игр: ${games.length}`;
+            
+            games.forEach((game, index) => {
+                const gameCard = createGameCard(game, index);
+                gamesGrid.appendChild(gameCard);
+            });
+            
+            container.innerHTML = '';
+            container.appendChild(countInfo);
+            container.appendChild(gamesGrid);
+        }
+        
+        // Создание карточки игры
+        function createGameCard(game, index) {
+            const card = document.createElement('div');
+            card.className = 'game-card';
+            card.style.animationDelay = `${index * 0.05}s`;
+            
+            // Генерация случайного градиента для баннера
+            const gradients = [
+                'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+                'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
+            ];
+            const randomGradient = gradients[Math.floor(Math.random() * gradients.length)];
+            
+            // Форматирование размера файла (демо)
+            const fileSize = (Math.random() * 5 + 1).toFixed(1);
+            
+            card.innerHTML = `
+                <div class="game-banner" style="background: ${randomGradient}">
+                    <div class="game-banner-icon"></div>
+                </div>
+                <div class="game-info">
+                    <div class="game-name">${escapeHtml(game.name)}</div>
+                    <div class="game-meta">
+                        <div class="game-size">📦 ${fileSize} GB</div>
+                        <div class="game-downloads">⬇️ ${Math.floor(Math.random() * 10000)}</div>
+                    </div>
+                    <a href="${escapeHtml(game.link)}" class="download-btn" download> Скачать игру</a>
+                </div>
+            `;
+            
+            return card;
+        }
+        
+        // Экранирование HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Поиск с debounce
+        let searchTimeout;
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                searchQuery = e.target.value;
+                filterAndDisplayGames();
+            }, 300);
+        });
+        
+        // Категории
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentCategory = btn.dataset.category;
+                filterAndDisplayGames();
+            });
+        });
+        
+        // Загрузка игр при загрузке страницы
+        document.addEventListener('DOMContentLoaded', loadGames);
+    </script>
+</body>
+</html>
