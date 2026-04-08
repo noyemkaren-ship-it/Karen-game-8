@@ -15,9 +15,9 @@ async def get_game_all_endpoint():
     result = get_game_all()
     return {"games": result}
 
-@router.delete("/delete/{game_id}")
-async def delete_game_endpoint(game_id: int):
-    result = delete_game(game_id)
+@router.delete("/delete/{name}")
+async def delete_game_endpoint(name: str):
+    result = delete_game(name)
     if result:
         return {"message": "Game deleted successfully"}
     raise HTTPException(status_code=404, detail="Game not found")
