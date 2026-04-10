@@ -22,5 +22,4 @@ app.include_router(router)
 @limiter.limit("10/minute")
 async def root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
-
 app.mount("/static", StaticFiles(directory="static"), name="static")
