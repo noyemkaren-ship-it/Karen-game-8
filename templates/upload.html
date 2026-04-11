@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Загрузка файлов</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .upload-area:hover, .upload-area.dragover {
+            border-color: #4CAF50;
+            background-color: #f0f8f0;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .file-list {
+            margin: 20px 0;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+        .file-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: white;
+            border-left: 3px solid #4CAF50;
+            word-break: break-all;
+        }
+        .file-item a {
+            color: #2196F3;
+            text-decoration: none;
+        }
+        .file-item a:hover {
+            text-decoration: underline;
+        }
+        .error {
+            color: red;
+            padding: 10px;
+            margin: 10px 0;
+            background: #ffebee;
+            border-radius: 5px;
+        }
+        .success {
+            color: green;
+            padding: 10px;
+            margin: 10px 0;
+            background: #e8f5e9;
+            border-radius: 5px;
+        }
+        .progress {
+            width: 100%;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+            display: none;
+        }
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: #4CAF50;
+            transition: width 0.3s;
+        }
+        h2 {
+            color: #333;
+        }
+        hr {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📁 Загрузка файлов</h1>
+        
+        <!-- Загрузка одного файла -->
+        <h2>1. Загрузить один файл</h2>
+        <div class="upload-area" id="singleDropZone">
+            <p>📂 Нажмите или перетащите файл сюда</p>
+            <input type="file" id="singleFileInput">
+            <button onclick="document.getElementById('singleFileInput').click()">Выбрать файл</button>
+        </div>
+        <div id="singleProgress" class="progress">
+            <div class="progress-bar"></div>
+        </div>
+        <div id="singleResult"></div>
+
+        <hr>
+
+        <!-- Загрузка нескольких файлов -->
+        <h2>2. Загрузить несколько файлов</h2>
+        <div class="upload-area" id="multipleDropZone">
+            <p>📂 Нажмите или перетащите файлы сюда</p>
+            <input type="file" id="multipleFileInput" multiple>
+            <button onclick="document.getElementById('multipleFileInput').click()">Выбрать файлы</button>
+        </div>
+        <div id="multipleProgress" class="progress">
+            <div class="progress-bar"></div>
+        </div>
+        <div id="multipleResult"></div>
+
+        <hr>
+
+        <!-- Список загруженных файлов -->
+        <h2>3. Загруженные файлы</h2>
+        <button onclick="loadFiles()">📋 Показать загруженные файлы</button>
+        <div id="fileList" class="file-list"></div>
+    </div>
+
+    <script>
+        // Загрузка одного файла
+        const singleInput = document.getElementById('singleFileInput');
+        const singleDropZone = document.getElementById('singleDropZone');
+        const singleResult = document.getElementById('singleResult');
+        const singleProgress = document.getElementById('singleProgress');
+        const singleProgressBar = singleProgress.querySelector('.progress-bar');
+
+        // Загрузка нескольких файлов
+        const multipleInput = document.getElementById('multipleFileInput');
+        const multipleDropZone = document.getElementById('multipleDropZone');
+        const multipleResult = document.getElementById('multipleResult');
+        const multipleProgress = document.getElementById('multipleProgress');
+        const multipleProgressBar = multipleProgress.querySelector('.progress-bar');
+
+        // Функция загрузки одного файла
+        async function uploadFile(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            singleProgress.style.display = 'block';
+            singleProgressBar.style.width = '0%';
+            singleResult.innerHTML = '';
+
+            try {
+                const response = await fetch('/upload/', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Ошибка: ${response.status}`);
+                }
+
+                const result = await response.json();
+                
+                singleResult.innerHTML = `
+                    <div class="success">
+                        ✅ Файл успешно загружен!<br>
+                        📄 Исходное имя: ${file.name}<br>
+                        💾 Сохранён как: ${result.filename}<br>
+                        🔗 <a href="${result.url}" target="_blank">Открыть файл</a>
+                    </div>
+                `;
+                
+                singleProgressBar.style.width = '100%';
+                setTimeout(() => {
+                    singleProgress.style.display = 'none';
+                    singleProgressBar.style.width = '0%';
+                }, 1000);
+                
+                loadFiles(); // Обновляем список файлов
+                
+            } catch (error) {
+                singleResult.innerHTML = `<div class="error">❌ Ошибка: ${error.message}</div>`;
+                singleProgress.style.display = 'none';
+            }
+        }
+
+        // Функция загрузки нескольких файлов
+        async function uploadMultipleFiles(files) {
+            const formData = new FormData();
+            for (let file of files) {
+                formData.append('files', file);
+            }
+
+            multipleProgress.style.display = 'block';
+            multipleProgressBar.style.width = '0%';
+            multipleResult.innerHTML = '';
+
+            try {
+                const response = await fetch('/upload-multiple/', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Ошибка: ${response.status}`);
+                }
+
+                const result = await response.json();
+                
+                let html = '<div class="success">✅ Загружено файлов: ' + result.uploaded.length + '</div>';
+                result.uploaded.forEach(item => {
+                    if (item.error) {
+                        html += `<div class="error">❌ ${item.original}: ${item.error}</div>`;
+                    } else {
+                        html += `
+                            <div class="file-item">
+                                📄 ${item.original} → сохранён как: <a href="${item.url}" target="_blank">${item.saved_as}</a>
+                            </div>
+                        `;
+                    }
+                });
+                multipleResult.innerHTML = html;
+                
+                multipleProgressBar.style.width = '100%';
+                setTimeout(() => {
+                    multipleProgress.style.display = 'none';
+                    multipleProgressBar.style.width = '0%';
+                }, 1000);
+                
+                loadFiles(); // Обновляем список файлов
+                
+            } catch (error) {
+                multipleResult.innerHTML = `<div class="error">❌ Ошибка: ${error.message}</div>`;
+                multipleProgress.style.display = 'none';
+            }
+        }
+
+        // Получение списка файлов
+        async function loadFiles() {
+            try {
+                const response = await fetch('/list-files/');
+                const result = await response.json();
+                
+                if (result.files.length === 0) {
+                    document.getElementById('fileList').innerHTML = '<p>Файлов пока нет</p>';
+                    return;
+                }
+                
+                let html = '<h3>📁 Все файлы в static:</h3>';
+                result.files.forEach(file => {
+                    html += `
+                        <div class="file-item">
+                            📄 ${file.name} (${formatFileSize(file.size)})<br>
+                            🔗 <a href="/static/${file.name}" target="_blank">/static/${file.name}</a><br>
+                            📅 ${file.modified}
+                        </div>
+                    `;
+                });
+                document.getElementById('fileList').innerHTML = html;
+                
+            } catch (error) {
+                document.getElementById('fileList').innerHTML = `<div class="error">❌ Ошибка загрузки списка: ${error.message}</div>`;
+            }
+        }
+
+        // Форматирование размера файла
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Drag and drop для одного файла
+        singleDropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            singleDropZone.classList.add('dragover');
+        });
+
+        singleDropZone.addEventListener('dragleave', () => {
+            singleDropZone.classList.remove('dragover');
+        });
+
+        singleDropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            singleDropZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file) uploadFile(file);
+        });
+
+        singleInput.addEventListener('change', (e) => {
+            if (e.target.files[0]) uploadFile(e.target.files[0]);
+        });
+
+        // Drag and drop для нескольких файлов
+        multipleDropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            multipleDropZone.classList.add('dragover');
+        });
+
+        multipleDropZone.addEventListener('dragleave', () => {
+            multipleDropZone.classList.remove('dragover');
+        });
+
+        multipleDropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            multipleDropZone.classList.remove('dragover');
+            const files = Array.from(e.dataTransfer.files);
+            if (files.length > 0) uploadMultipleFiles(files);
+        });
+
+        multipleInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) uploadMultipleFiles(Array.from(e.target.files));
+        });
+
+        // Загружаем список файлов при открытии страницы
+        loadFiles();
+    </script>
+</body>
+</html>
